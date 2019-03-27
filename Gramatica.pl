@@ -1,8 +1,8 @@
 %Saludar
 
-inicio --> saludo(Gen,Num), nombre.
-saludo(Gen,Num) --> unica.
-saludo(Gen,Num) --> primera(Gen,Num), segunda(Gen,Num).
+inicio --> saludo(Tipo,Num), nombre.
+saludo(Tipo,Num) --> unica.
+saludo(Tipo,Num) --> primera(Tipo,Num), segunda(Tipo,Num).
 
 unica --> ["Hola"].
 primera(1,plural) --> ["Buenos"].
@@ -28,3 +28,17 @@ nombre --> ["doctor"].
 nombre --> ["Dr"].
 nombre --> ["dr"].
 
+
+%Finalizar
+
+fin --> despedida, nombre.
+despedida --> d_unica.
+despedida --> d_primera, d_segunda.
+d_unica --> ["Gracias"].
+d_unica --> ["Adios"].
+d_primera --> ["Muchas"].
+d_segunda --> ["gracias"].
+
+
+
+%Preguntas

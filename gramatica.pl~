@@ -1,8 +1,8 @@
 %Saludar
 
-inicio --> saludo(Gen,Num), nombre.
-saludo(Gen,Num) --> unica.
-saludo(Gen,Num) --> primera(Gen,Num), segunda(Gen,Num).
+inicio --> saludo(Tipo,Num), nombre.
+saludo(Tipo,Num) --> unica.
+saludo(Tipo,Num) --> primera(Tipo,Num), segunda(Tipo,Num).
 
 unica --> ["Hola"].
 primera(1,plural) --> ["Buenos"].
@@ -25,4 +25,39 @@ nombre --> ["DrLog"].
 nombre --> ["drlog"].
 nombre --> ["Doctor"].
 nombre --> ["doctor"].
+nombre --> ["Dr"].
+nombre --> ["dr"].
 
+
+%Finalizar
+
+fin --> despedida, nombre.
+despedida --> d_unica.
+despedida --> d_primera, d_segunda.
+d_unica --> ["Gracias"].
+d_unica --> ["Adios"].
+d_primera --> ["Muchas"].
+d_segunda --> ["gracias"].
+
+
+
+%Preguntas
+o(o(SN,SV)) --> sn(SN,_Gen,Num), sv(SV,Num).
+sn(sn(DET,N),Gen,Num) --> det(DET,Gen,Num), n(N,Gen,Num).
+sv(sv(VT,SN),Num) --> vt(VT,Num), sn(SN,_Gen,_Num).
+sv(sv(VI),Num) --> vi(VI,Num).
+det(det(X),f,sg) --> [X], {member(X,[la,una])}.
+det(det(X),f,pl) --> [X], {member(X,[las,unas])}.
+det(det(X),m,sg) --> [X], {member(X,[el,un])}.
+det(det(X),m,pl) --> [X], {member(X,[los,unos])}.
+vi(vi(ladra),sg) --> [ladra].
+vi(vi(ladran),pl) --> [ladran].
+vt(vt(muerde),sg) --> [muerde].
+vt(vt(muerden),pl) --> [muerden].
+n(n(perra),f,sg) --> [perra].
+n(n(perras),f,pl) --> [perras].
+n(n(X),m,sg) --> [X], {member(X,[perro,hueso])}.
+n(n(X),m,pl) --> [X], {member(X,[perros,huesos])}.
+arbol(Orac):- arbol(0,Orac).
+
+arbol(Tab,R):- nl,tab(Tab),R =.. Li, (Li = [_,_] -> format("~w",[R]); (Li = [S|Otros],format("~w(",[S]), atom_length(S,Ls),Tab2 is Tab+Ls+1, findall(_,(member(X,Otros),arbol(Tab2,X)),_)), format(")")).
