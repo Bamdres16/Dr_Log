@@ -1,6 +1,19 @@
-start(Oracion):- split_string(string_lower(Oracion), " ", "", L), phrase(inicio, L).
-start(Oracion):- split_string(string_lower(Oracion), " ", "", L), phrase(fin, L).
-start(Oracion):- split_string(string_lower(Oracion), " ", "", L), phrase(pregunta, L).
+?- consult("Bases.pl").
+%Relaciones
+:-op(800,fx,si).
+:-op(700,xfx,entonces).
+:-op(300,xfy,o).
+:-op(200,xfy,y).
+:-op(500,fx,not).
+%Hechos simples
+%Verifica si está en la lista
+miembro(X,[X|_]).
+miembro(X,[_|R]):- miembro(X,R).
+
+
+start(Oracion):- string_lower(Oracion,X), split_string(X, " ", "", L), phrase(inicio, L).
+start(Oracion):-  string_lower(Oracion,X),split_string(X, " ", "", L), phrase(fin, L).
+start(Oracion):- string_lower(Oracion,X), split_string(X, " ", "", L), phrase(pregunta, L).
 %Saludar
 
 inicio --> saludo(Tipo,Num), nombre.
@@ -73,4 +86,45 @@ articulo(singular,1) --> ["el"].
 articulo(singular,1) --> ["la"].
 
 preposición --> ["de"].
+
+
+es_verdad(P):- enfermedad(P).
+es_verdad(P):-
+si Condicion entonces P,
+es_verdad(Condicion).
+es_verdad(P1 y P2):-
+es_verdad(P1),
+es_verdad(P2).
+es_verdad(P1 o P2):-
+(
+es_verdad(P1)
+;
+es_verdad(P2)
+).
+
+
+
+%Razonamiento hacia delante
+hacia_delante(Sintomas):- nuevo_hecho_derivado(Sintomas,P), !,                       write('Derivado: '), write(P), nl,
+                           append([P],Sintomas,L1),
+                           hacia_delante(L1);
+                          write('No hay mas hechos').
+
+
+nuevo_hecho_derivado(Sintomas,Conclusion):-
+    si Condicion entonces Conclusion,
+    not miembro(Conclusion,L),
+    hecho_compuesto(L,Condicion).
+
+hecho_compuesto(L,Condicion):-
+miembro(Condicion,L). % Es un hecho simple, está incluido en la lista
+hecho_compuesto(L,Cond1 y Cond2):-
+hecho_compuesto(L,Cond1),
+hecho_compuesto(L,Cond2).
+hecho_compuesto(L,Cond1 o Cond2):-
+(
+hecho_compuesto(L,Cond1)
+;
+hecho_compuesto(L,Cond2)
+).
 

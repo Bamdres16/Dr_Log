@@ -1,3 +1,10 @@
+?- consult("Bases.pl").
+%Hechos simples
+%Verifica si está en la lista
+miembro(X,[X|_]).
+miembro(X,[_|R]):- miembro(X,R).
+
+
 start(Oracion):- string_lower(Oracion,X), split_string(X, " ", "", L), phrase(inicio, L).
 start(Oracion):-  string_lower(Oracion,X),split_string(X, " ", "", L), phrase(fin, L).
 start(Oracion):- string_lower(Oracion,X), split_string(X, " ", "", L), phrase(pregunta, L).
@@ -73,4 +80,7 @@ articulo(singular,1) --> ["el"].
 articulo(singular,1) --> ["la"].
 
 preposición --> ["de"].
+
+
+
 
