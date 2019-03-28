@@ -4,13 +4,14 @@
 miembro(X,[X|_]).
 miembro(X,[_|R]):- miembro(X,R).
 
+que_tipo_es(Oracion,Accion):- start(Oracion,Accion).
 
-start(Oracion):- string_lower(Oracion,X), split_string(X, " ", "", L), phrase(inicio, L).
-start(Oracion):-  string_lower(Oracion,X),split_string(X, " ", "", L), phrase(fin, L).
-start(Oracion):- string_lower(Oracion,X), split_string(X, " ", "", L), phrase(pregunta, L).
-%Saludar
+start(Oracion,Y):- string_lower(Oracion,X), split_string(X, " ", "", L), phrase(inicio(Y), L),!.
+start(Oracion,Y):-  string_lower(Oracion,X),split_string(X, " ", "", L), phrase(fin(Y), L),!.
+start(Oracion,Y):- string_lower(Oracion,X), split_string(X, " ", "", L), phrase(pregunta(Y), L),!.
 
-inicio --> saludo(Tipo,Num), nombre.
+
+inicio("saludar") --> saludo(Tipo,Num), nombre.
 saludo(Tipo,Num) --> unica.
 saludo(Tipo,Num) --> primera(Tipo,Num), segunda(Tipo,Num).
 
@@ -34,40 +35,42 @@ nombre --> ["DrLog"]; ["drlog"]; ["Doctor"]; ["doctor"]; ["Dr"];["dr"].
 
 %Finalizar
 
-fin --> despedida, nombre.
+fin("despedirse") --> despedida, nombre.
 despedida --> d_unica.
-despedida --> d_primera, d_segunda.
-d_unica --> ["Gracias"].
-d_unica --> ["Adios"].
-d_primera --> ["Muchas"].
-d_segunda --> ["gracias"].
+despedida --> d_primera, d_unica.
+d_unica --> ["gracias"].
+d_unica --> ["adios"].
+d_primera --> ["muchas"].
 
 
 
 %Preguntas
 %Pronombre + sujeto + verbo
-pregunta --> pronombre(Num,Tipo), sujeto(Num,Tipo), verbo(Num,Tipo).
+pregunta(Consulta) --> pronombre(Num,Tipo), sujeto(Num,Tipo,Consulta), verbo(Num,Tipo).
+%Pronombre + verbo + sujeto
+pregunta(Consulta) --> pronombre(Num,Tipo), verbo(Num,Tipo), sujeto(Num,Tipo,Consulta).
 %Pronombre + verbo compuesto
-pregunta --> pronombre(Num,Tipo), verbo(Num,Tipo), verbo(Num,Tipo).
+
+pregunta(Consulta) --> pronombre(Num,Tipo), verbo(Num,Tipo), verbo(Num,Tipo).
 %Pronombre + verbo + articulo + sujeto
-pregunta --> pronombre(Num,Tipo), verbo(Num,Tipo), articulo(Num,Tipo), sujeto(Num,Tipo).
+pregunta(Consulta) --> pronombre(Num,Tipo), verbo(Num,Tipo), articulo(Num,Tipo), sujeto(Num,Tipo,Consulta).
 %Pronombre + verbo + nombre
-pregunta --> pronombre(Num,Tipo), verbo(Num,Tipo), nombre.
+pregunta(Consulta) --> pronombre(Num,Tipo), verbo(Num,Tipo), nombre.
+
 % Pronombre + verbo + articulo + sujeto + preposicion + articulo +
-% pregunta --> pronombre(Num,Tipo), verbo(Num,Tipo), articulo(Num,Tipo),
-% sujeto(Num,Tipo), preposición, articulo(Num2,Tipo2), enfermedad.
+pregunta(Consulta) --> pronombre(Num,Tipo), verbo(Num,Tipo), articulo(Num,Tipo),sujeto(Num,Tipo,Consulta), preposición, articulo, enfermedad.
 
 % enfermedad
-pronombre(singular,1) --> ["¿Qué"]; ["Qué"].
-pronombre(plural,2) --> ["¿Cuáles"]; ["Cuáles"].
-pronombre(singular,1) --> ["¿Cuál"]; ["Cuál"].
-pronombre(singular,3) --> ["¿Cómo"];["Cómo"].
+pronombre(singular,1) --> ["¿qué"]; ["qué"].
+pronombre(plural,2) --> ["¿cuáles"]; ["cuáles"].
+pronombre(singular,1) --> ["¿cuál"]; ["cuál"].
+pronombre(singular,3) --> ["¿cómo"];["cómo"].
 
 
-sujeto(singular,1) --> ["enfermedad"].
-sujeto(plural,2) --> ["causas?"]; ["causas"].
-
-sujeto(singular,1) --> ["tratamiento?"]; ["tratamiento"].
+sujeto(singular,1,"enfermedad") --> ["enfermedad"].
+sujeto(plural,2,"causas") --> ["causas?"]; ["causas"].
+sujeto(singular,1,"tratamiento") --> ["tratamiento?"]; ["tratamiento"].
+sujeto(singular,3,"prevencion") --> ["prevenirla"]; ["prevenirla?"];["prevenir"].
 
 verbo(singular,1) -->  ["tengo?"]; ["tengo"].
 verbo(plural,2) --> ["son"].
@@ -78,7 +81,7 @@ verbo(singular,3) --> ["prevenirla?"]; ["prevenirla"].
 articulo(plural,2) --> ["las"].
 articulo(singular,1) --> ["el"].
 articulo(singular,1) --> ["la"].
-
+articulo --> ["la"].
 preposición --> ["de"].
 
 
