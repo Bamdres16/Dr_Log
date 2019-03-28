@@ -1,6 +1,6 @@
-start(Oracion):- split_string(Oracion, " ", "", L), phrase(inicio, L).
-start(Oracion):- split_string(Oracion, " ", "", L), phrase(fin, L).
-start(Oracion):- split_string(Oracion, " ", "", L), phrase(pregunta, L).
+start(Oracion):- string_lower(Oracion,X), split_string(X, " ", "", L), phrase(inicio, L).
+start(Oracion):-  string_lower(Oracion,X),split_string(X, " ", "", L), phrase(fin, L).
+start(Oracion):- string_lower(Oracion,X), split_string(X, " ", "", L), phrase(pregunta, L).
 %Saludar
 
 inicio --> saludo(Tipo,Num), nombre.
@@ -74,10 +74,3 @@ articulo(singular,1) --> ["la"].
 
 preposición --> ["de"].
 
-%Consultas
-consulta(Base):- pregunta_y_lee(Entrada), procesar_entrada(Entrada, Base).
-
-pregunta_y_lee(Entrada):- write('? '), read(Entrada).
-procesar_entrada(fin,_Base_):- !.
-procesar_entrada(muestra_reglas,Base):- !, muestra_reglas(Base), consulta(Base).
-procesar_entrada(Oracion,Base):- phrase(

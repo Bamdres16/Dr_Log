@@ -1,6 +1,6 @@
-start(Oracion):- split_string(Oracion, " ", "", L), phrase(inicio, L).
-start(Oracion):- split_string(Oracion, " ", "", L), phrase(fin, L).
-start(Oracion):- split_string(Oracion, " ", "", L), phrase(pregunta, L).
+start(Oracion):- split_string(string_lower(Oracion), " ", "", L), phrase(inicio, L).
+start(Oracion):- split_string(string_lower(Oracion), " ", "", L), phrase(fin, L).
+start(Oracion):- split_string(string_lower(Oracion), " ", "", L), phrase(pregunta, L).
 %Saludar
 
 inicio --> saludo(Tipo,Num), nombre.
@@ -47,7 +47,8 @@ pregunta --> pronombre(Num,Tipo), verbo(Num,Tipo), articulo(Num,Tipo), sujeto(Nu
 %Pronombre + verbo + nombre
 pregunta --> pronombre(Num,Tipo), verbo(Num,Tipo), nombre.
 % Pronombre + verbo + articulo + sujeto + preposicion + articulo +
-pregunta --> pronombre(Num,Tipo), verbo(Num,Tipo), articulo(Num,Tipo), sujeto(Num,Tipo), preposición, articulo(Num2,Tipo2), enfermedad.
+% pregunta --> pronombre(Num,Tipo), verbo(Num,Tipo), articulo(Num,Tipo),
+% sujeto(Num,Tipo), preposición, articulo(Num2,Tipo2), enfermedad.
 
 % enfermedad
 pronombre(singular,1) --> ["¿Qué"]; ["Qué"].
