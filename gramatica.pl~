@@ -30,35 +30,35 @@ segunda(1,singular) --> ["Dia"].
 
 segunda(2,plural) --> ["tardes"].
 segunda(2,plural) --> ["noches"].
-
 nombre --> ["DrLog"]; ["drlog"]; ["Doctor"]; ["doctor"]; ["Dr"];["dr"].
 
 %Finalizar
 
-fin("despedirse") --> despedida, nombre.
-despedida --> d_unica.
-despedida --> d_primera, d_unica.
-d_unica --> ["gracias"].
-d_unica --> ["adios"].
-d_primera --> ["muchas"].
+fin(Tipo) --> despedida(Tipo), nombre.
+despedida(Tipo) --> d_unica(Tipo).
+despedida(Tipo) --> d_primera(Tipo), d_unica(Tipo).
+d_unica("gracias") --> ["gracias"].
+d_unica("adios") --> ["adios"].
+d_primera("gracias") --> ["muchas"].
 
 
 
 %Preguntas
 %Pronombre + sujeto + verbo
-pregunta(Consulta) --> pronombre(Num,Tipo), sujeto(Num,Tipo,Consulta), verbo(Num,Tipo).
+pregunta(Consulta) --> pronombre(Num,Tipo), sujeto(Num,Tipo,Consulta), verbo(Num,Tipo,_).
 %Pronombre + verbo + sujeto
-pregunta(Consulta) --> pronombre(Num,Tipo), verbo(Num,Tipo), sujeto(Num,Tipo,Consulta).
+pregunta(Consulta) --> pronombre(Num,Tipo), verbo(Num,Tipo,_), sujeto(Num,Tipo,Consulta).
 %Pronombre + verbo compuesto
 
-pregunta(Consulta) --> pronombre(Num,Tipo), verbo(Num,Tipo), verbo(Num,Tipo).
+pregunta(Consulta) --> pronombre(Num,Tipo), verbo(Num,Tipo,_), verbo(Num,Tipo,_).
 %Pronombre + verbo + articulo + sujeto
-pregunta(Consulta) --> pronombre(Num,Tipo), verbo(Num,Tipo), articulo(Num,Tipo), sujeto(Num,Tipo,Consulta).
+pregunta(Consulta) --> pronombre(Num,Tipo), verbo(Num,Tipo,_), articulo(Num,Tipo), sujeto(Num,Tipo,Consulta).
 %Pronombre + verbo + nombre
-pregunta(Consulta) --> pronombre(Num,Tipo), verbo(Num,Tipo), nombre.
+pregunta(Consulta) --> pronombre(Num,Tipo), verbo(Num,Tipo,_), nombre.
 
 % Pronombre + verbo + articulo + sujeto + preposicion + articulo +
-pregunta(Consulta) --> pronombre(Num,Tipo), verbo(Num,Tipo), articulo(Num,Tipo),sujeto(Num,Tipo,Consulta), preposición, articulo, enfermedad.
+pregunta(Consulta) --> pronombre(Num,Tipo), verbo(Num,Tipo,_), articulo(Num,Tipo),sujeto(Num,Tipo,Consulta), preposición, articulo, enfermedad.
+pregunta(Consulta) --> verbo(Num,Tipo,Consulta), sintomas.
 
 % enfermedad
 pronombre(singular,1) --> ["¿qué"]; ["qué"].
@@ -72,11 +72,12 @@ sujeto(plural,2,"causas") --> ["causas?"]; ["causas"].
 sujeto(singular,1,"tratamiento") --> ["tratamiento?"]; ["tratamiento"].
 sujeto(singular,3,"prevencion") --> ["prevenirla"]; ["prevenirla?"];["prevenir"].
 
-verbo(singular,1) -->  ["tengo?"]; ["tengo"].
-verbo(plural,2) --> ["son"].
-verbo(singular,1) --> ["es"].
-verbo(singular,3) --> ["puedo"].
-verbo(singular,3) --> ["prevenirla?"]; ["prevenirla"].
+verbo(singular,1,_) -->  ["tengo?"].
+verbo(singular,1,"sintoma") -->  ["tengo"].
+verbo(plural,2,_) --> ["son"].
+verbo(singular,1,_) --> ["es"].
+verbo(singular,3,_) --> ["puedo"].
+verbo(singular,3,_) --> ["prevenirla?"]; ["prevenirla"].
 
 articulo(plural,2) --> ["las"].
 articulo(singular,1) --> ["el"].
@@ -85,5 +86,33 @@ articulo --> ["la"].
 preposición --> ["de"].
 
 
+mensaje("saludar", "DrLog: Cuénteme, en qué lo puedo ayudar?").
+mensaje("adios", "DrLog: Hasta luego").
+mensaje("gracias",  "DrLog: Con mucho gusto.").
+mensaje("resultado", "DrLog: Usted padece de ").
+mensaje("enfermedad", "DrLog: Usted padece de gripe").
+mensaje("sintoma","sintoma").
+:-op(900,fy,not).
 
+obtener_tipo(X,Mensaje):-
+    atom_string(X,Y),
+    que_tipo_es(Y,Z),
+    mensaje(Z,Mensaje).
+es_sintoma([_|A], "sintoma",[A|Resto]).
+
+start:-
+    start([]).
+
+start(Lista):-
+     write("Paciente: "),
+    read(X),
+    obtener_tipo(X,Mensaje),
+    write(Mensaje),
+    repeat,not (
+    nl,
+    write("Paciente: "),
+    read(Y),
+    obtener_tipo(Y,Men),
+    es_sintoma(Y, Men,Lista),
+    write(Men)).
 
