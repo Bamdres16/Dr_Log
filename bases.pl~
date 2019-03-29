@@ -21,10 +21,8 @@
 sintomas(tos).
 sintomas(ahogo).
 sintomas(dolorPecho).
-
 sintomas(fiebre).
 sintomas(mocos).
-
 sintomas(comezon).
 sintomas(dolor).
 
@@ -61,24 +59,7 @@ enfermedad(gripe).
 enfermedad(asma).
 enfermedad(varicela).
 
-%Relaciones
 
-
-limita_con(costaRica, nicaragua). %brasil limita con argentina, son grafos son dirigidos
-limita_con(nicaragua, alemania).
-limita_con(alemania, eeuu).
-limita_con(eeuu, costaRica).
-
-limitrofes(X,Y):-limita_con(X,Y). %OR.
-limitrofes(X,Y):-limita_con(Y,X). %grafo no dirigido.
-
-
-
-superficie_pais(nicaragua, 123).
-superficie_pais(alemania, 345).
-
-
-pais_pequeño(X):- superficie_pais(X,Y), Y < 200.
 %---------------------------------------------------------------
 %-----------------Relaciones de sintomas y enfermedades---------.
 %

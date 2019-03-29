@@ -67,6 +67,19 @@ enfermedad(varicela).
 sintomas_de(tos, ahogo,dolorPecho,asma).
 sintomas_de(tos, fiebre, mocos, gripe).
 sintomas_de(comezon, fiebre, dolor, varicela).
+
+sintomas_De(tos,asma).
+sintomas_De(ahogo, asma).
+sintomas_De(dolorPecho, asma).
+
+sintomas_De(tos, gripe).
+sintomas_De(fiebre, gripe).
+sintomas_De(mocos, gripe).
+
+sintomas_De(comezon, varicela).
+sintomas_De(fiebre, varicela).
+sintomas_De(dolor, varicela).
+
 %
 sintomas_General(W,X,Y,Z):- sintomas_de(W,X,Y,Z).
 sintomas_General(W,X,Y,Z):- sintomas_de(X,Y,W,Z).
