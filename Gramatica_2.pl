@@ -1,4 +1,7 @@
 ?- consult("Bases.pl").
+:- dynamic terms/1.
+:- dynamic sint/1.
+:- dynamic enfermo_de/1.
 %--------------------------------------------
 %Hechos y reglas simple
 %--------------------------------------------
@@ -130,7 +133,68 @@ d_primera("gracias",["muchas"|S],S).
 
 
 
+%----------------------------------
+%Acomodar sintomas
+%----------------------------------
+
+
+
+%----------------------------------
+%Mensajes para DrLog
+%----------------------------------
+mensaje("saludo", "DrLog: Cuénteme, en qué lo puedo ayudar?").
+mensaje("adios", "DrLog: Hasta luego").
+mensaje("gracias",  "DrLog: Con mucho gusto, nos vemos pronto.").
+mensaje("enfermedad", "DrLog: Usted padece de ").
+mensaje("false","DrLog: No te entiendo, vuelve a escribirlo").
+
+
+
+%----------------------------------
+%Deduce que enfermedad tiene
+%----------------------------------
 buscar([], _ , 0).
 buscar(X , E , 1) :- sintomas_de(X, E).
-buscar([X|Xs] , E , P) :- enfermedad(E) , buscar(X , E , S1) , buscar(Xs , E ,S2) , P is S1 + S2,!.
-?- write("--------------------Para iniciar escriba start--------------------").
+buscar([X|Xs] , E , P) :- enfermedad(E) , atom_string(Atom,X), buscar(Atom , E , S1)  , buscar(Xs , E ,S2) , P is S1 + S2,!.
+
+
+
+%----------------------------------
+%Conversacion
+%----------------------------------
+terms(0).
+reset:-  retractall(sint(X)),retractall(terms(X)),assert(terms(0)).
+validar(Sintomas, Enfermedad):- terms(X), X = 2, buscar(Sintomas,Enfermedad,_), mensaje("enfermedad", Mensaje), write(Mensaje), write(Enfermedad),
+    retractall(enfermo_de(Enfermedad)), assert(enfermo_de(Enfermedad)),reset,!.
+validar(Sintomas,_):- terms(X), X = 1,write("DrLog: ¿Que otro síntoma presenta? Al menos requiero 3 síntomas para dar un
+diagnóstico."), guardar(Sintomas,Len),!.
+validar(Sintomas,_):- terms(X), X = 0,write("DrLog: ¿Que otro síntoma presenta?"),guardar(Sintomas,Len),!.
+guardar([],0).
+guardar(Sintomas,Len):- cabeza(Sintomas,C,R), assert(sint(C)),terms(X),guardar(R,Len1),retractall(terms(_)), Len is Len1 +1+X,assert(terms(Len)),!.
+
+:-op(900,fy,not).
+
+start:-
+    reset,
+    write("Paciente: "),
+    read(X),
+    oracion(X,Mensaje),
+    mensaje(Mensaje,Y),
+    write(Y),
+    repeat,
+    not (   nl,
+    write("Paciente: "),
+    read(Z),
+    %Determina si habla de sintomas
+    oracion(Z,Mensaje2),
+    length(Mensaje2,L),
+    validar(Mensaje2,Enfermedad)).
+
+
+
+
+
+
+
+
+
