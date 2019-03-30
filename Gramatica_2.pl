@@ -2,6 +2,8 @@
 :- dynamic terms/1.
 :- dynamic sint/1.
 :- dynamic enfermo_de/1.
+:-op(900,fy,not).
+
 %--------------------------------------------
 %Hechos y reglas simple
 %--------------------------------------------
@@ -23,7 +25,7 @@ cabeza([X|Y],X,Y).
 oracion(Oracion,Tipo):- string_lower(Oracion,X), split_string(X, " ", "", L), pregunta(L,[],Tipo),!.
 oracion(Oracion,Tipo):- string_lower(Oracion,X), split_string(X, " ", "", L), saludo(L,[],Tipo),!.
 oracion(Oracion,Tipo):- string_lower(Oracion,X), split_string(X, " ", "", L), despedida(L,[],Tipo),!.
-
+oracion(_,"false").
 %----------------------------------
 %BNF, Reconoce las palabras clave
 %----------------------------------
@@ -142,19 +144,21 @@ d_primera("gracias",["muchas"|S],S).
 %----------------------------------
 %Mensajes para DrLog
 %----------------------------------
-mensaje("saludo", "DrLog: Cuénteme, en qué lo puedo ayudar?").
-mensaje("adios", "DrLog: Hasta luego").
-mensaje("gracias",  "DrLog: Con mucho gusto, nos vemos pronto.").
-mensaje("enfermedad", "DrLog: Usted padece de ").
-mensaje("false","DrLog: No te entiendo, vuelve a escribirlo").
-
-
+mensaje("saludo"):- write("DrLog: Cuénteme, en qué lo puedo ayudar?").
+mensaje("adios"):-  write("DrLog: Hasta luego"), fail.
+mensaje("gracias"):- write("DrLog: Con mucho gusto, nos vemos pronto."), fail.
+mensaje("enfermedad"):- write("DrLog: Usted padece de ").
+mensaje(Lista):- is_list(Lista),validar(Lista,_).
+mensaje("false"):- write("DrLog: No te entiendo, vuelve a escribirlo").
+mensaje("existe"):- write("DrLog: Ese sintoma ya me lo has dicho").
+mensaje("primero"):- write("DrLog: ¿Que otro síntoma presenta?").
+mensaje("segundo"):- write("DrLog: ¿Que otro síntoma presenta? Al menos requiero 3 síntomas para dar un diagnóstico.").
 
 %----------------------------------
 %Deduce que enfermedad tiene
 %----------------------------------
 buscar([], _ , 0).
-buscar(X , E , 1) :- sintomas_de(X, E).
+buscar(X , E , 1) :-sintomas_de(X, E).
 buscar([X|Xs] , E , P) :- enfermedad(E) , atom_string(Atom,X), buscar(Atom , E , S1)  , buscar(Xs , E ,S2) , P is S1 + S2,!.
 
 
@@ -164,31 +168,23 @@ buscar([X|Xs] , E , P) :- enfermedad(E) , atom_string(Atom,X), buscar(Atom , E ,
 %----------------------------------
 terms(0).
 reset:-  retractall(sint(X)),retractall(terms(X)),assert(terms(0)).
-validar(Sintomas, Enfermedad):- terms(X), X = 2, buscar(Sintomas,Enfermedad,_), mensaje("enfermedad", Mensaje), write(Mensaje), write(Enfermedad),
-    retractall(enfermo_de(Enfermedad)), assert(enfermo_de(Enfermedad)),reset,!.
-validar(Sintomas,_):- terms(X), X = 1,write("DrLog: ¿Que otro síntoma presenta? Al menos requiero 3 síntomas para dar un
-diagnóstico."), guardar(Sintomas,Len),!.
-validar(Sintomas,_):- terms(X), X = 0,write("DrLog: ¿Que otro síntoma presenta?"),guardar(Sintomas,Len),!.
-guardar([],0).
-guardar(Sintomas,Len):- cabeza(Sintomas,C,R), assert(sint(C)),terms(X),guardar(R,Len1),retractall(terms(_)), Len is Len1 +1+X,assert(terms(Len)),!.
 
-:-op(900,fy,not).
+validar(Sintomas, Enfermedad):- terms(X), X = 2,(not(guardar(Sintomas,_))->mensaje("existe");buscar(Sintomas,Enfermedad,_), mensaje("enfermedad"), write(Enfermedad),retractall(enfermo_de(Enfermedad)), assert(enfermo_de(Enfermedad)),reset).
+validar(Sintomas,_):- terms(X), X = 1,(not(guardar(Sintomas,_))->mensaje("existe");mensaje("segundo")),!.
+validar(Sintomas,_):- terms(X), X = 0,(not(guardar(Sintomas,_))->mensaje("existe");mensaje("primero")),!.
+guardar([],0).
+guardar(Sintomas,Len):- cabeza(Sintomas,C,R), (not(sint(C))-> (assert(sint(C)),terms(X),guardar(R,Len1),retractall(terms(_)), Len is Len1 +1+X,assert(terms(Len)))),!.
+
 
 start:-
     reset,
-    write("Paciente: "),
-    read(X),
-    oracion(X,Mensaje),
-    mensaje(Mensaje,Y),
-    write(Y),
     repeat,
-    not (   nl,
+    not (nl,
     write("Paciente: "),
     read(Z),
-    %Determina si habla de sintomas
     oracion(Z,Mensaje2),
-    length(Mensaje2,L),
-    validar(Mensaje2,Enfermedad)).
+    mensaje(Mensaje2)).
+
 
 
 
