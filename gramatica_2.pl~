@@ -31,7 +31,7 @@ oracion(_,"false").
 %----------------------------------
 %----------------------------------
 %----------------------------------
-%Preguntan
+%Preguntas
 %----------------------------------
 
 %Responde es que me está preguntando el usuario
@@ -50,8 +50,9 @@ pregunta(S0,S,Responde):- pronombre_int(Num,Relacion,S0,S1), verbo(Num,Relacion,
 
 % Pronombre + verbo + articulo + sujeto + preposicion + articulo +
 pregunta(S0,S,S6):- pronombre_int(Num,Relacion,S0,S1), verbo(Num,Relacion,_,S1,S2), articulo(Num,Relacion,S2,S3),sujeto(Num,Relacion,_,S3,S4), preposición(S4,S5), articulo(S5,S), cabeza(S,S6,_), atom_string(Atom, S6), enfermedad(Atom).
-pregunta(S0,_,S1):- verbo(_,_,_,S0,S1),!.
 
+
+pregunta(S0,_,S1):-cabeza(S0,"tengo",S1),!.
 pregunta([_|S0],_,Tipo):- pregunta(S0,_,Tipo).
 
 
@@ -75,6 +76,11 @@ sujeto(plural,2,"causas",["causas?"|S],S).
 
 sujeto(singular,1,"tratamiento",["tratamiento"|S],S).
 sujeto(singular,1,"tratamiento",["tratamiento?"|S],S).
+sujeto(singular,3,"tratamiento",["tratarla"|S],S).
+sujeto(singular,3,"tratamiento",["tratarlo"|S],S).
+sujeto(singular,3,"tratamiento",["tratar"|S],S).
+
+
 sujeto(singular,3,"prevencion",["prevenirla"|S],S).
 sujeto(singular,3,"prevencion",["prevenirla?"|S],S).
 sujeto(singular,3,"prevencion",["prevenir"|S],S).
@@ -83,11 +89,15 @@ verbo(singular,1,_,["tengo?"|S],S).
 verbo(singular,1,_,["tengo"|S],S).
 verbo(plural,2,_,["son"|S],S).
 verbo(singular,1,_,["es"|S],S).
+
 verbo(singular,3,_,["puedo"|S],S).
+verbo(singular,3,_,["puede"|S],S).
+
 
 
 articulo(plural,2,["las"|S],S).
 articulo(singular,1,["el"|S],S).
+
 articulo(singular,1,["la"|S],S).
 articulo(["la"|S],S).
 
@@ -161,7 +171,10 @@ listar_tratamiento(Head,Resto):- write(Head), write(", "), cabeza(Resto,C,R),lis
 mensaje("saludo"):- write("DrLog: Cuénteme, en qué lo puedo ayudar?").
 mensaje("adios"):-  write("DrLog: Hasta luego"), fail.
 mensaje("gracias"):- write("DrLog: Con mucho gusto, nos vemos pronto."), fail.
-mensaje("enfermedad"):- write("DrLog: Usted padece de ").
+mensaje("enfermedad"):- (enfermo_de(X)-> write("DrLog: Usted padece de "), write(X)); mensaje("nulo").
+mensaje("nulo"):- write("Debe ingresar sus sintomas").
+mensaje("enfermo"):- write("DrLog: Usted padece de ").
+
 mensaje(Lista):- is_list(Lista),validar(Lista,_).
 mensaje("false"):- write("DrLog: No te entiendo, vuelve a escribirlo").
 mensaje("existe"):- write("DrLog: Ese sintoma ya me lo has dicho").
@@ -186,9 +199,9 @@ terms(0).
 
 reset:-  retractall(sint(X)),retractall(terms(X)),assert(terms(0)).
 resetall:- reset, retractall(enfermo_de(_)).
-validar(Sintomas, Enfermedad):- terms(2),findall(S,sint(S),Lista),append(Sintomas,Lista,C),(not(guardar(Sintomas,_))->mensaje("existe");(buscar(C,Enfermedad,_), mensaje("enfermedad"), write(Enfermedad),retractall(enfermo_de(_)), assert(enfermo_de(Enfermedad)),reset);mensaje("desconocido"),reset).
+validar(Sintomas, Enfermedad):- terms(2),findall(S,sint(S),Lista),append(Sintomas,Lista,C),(not(guardar(Sintomas,_))->mensaje("existe");(buscar(C,Enfermedad,_), mensaje("enfermo"), write(Enfermedad),retractall(enfermo_de(_)), assert(enfermo_de(Enfermedad)),reset);mensaje("desconocido"),reset).
 validar(Sintomas,_):- terms(1),(not(guardar(Sintomas,_))->mensaje("existe");mensaje("segundo")),!.
-validar(Sintomas,_):- terms(0),(not(guardar(Sintomas,_))->mensaje("existe");mensaje("primero")),!.
+validar(Sintomas,_):- terms(0),resetall,(not(guardar(Sintomas,_))->mensaje("existe");mensaje("primero")),!.
 guardar([],0).
 guardar(Sintomas,Len):- cabeza(Sintomas,C,R),(not(sint(C))-> (assert(sint(C)),terms(X),guardar(R,Len1),retractall(terms(_)), Len is Len1 +1+X,assert(terms(Len)))),!.
 
