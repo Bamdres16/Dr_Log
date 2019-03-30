@@ -61,6 +61,8 @@ pregunta(S0,_,[S1]):-(cabeza(S0,"tengo",[S|_]);cabeza(S0,"tenido",[S|_])),quitar
 
 pregunta(S0,_,[Z]):- cabeza(S0,C,_),quitar(C,Z),atom_string(Atom, Z), sintomas(Atom).
 pregunta([_|S0],_,Tipo):- pregunta(S0,_,Tipo).
+pregunta(["prevenirla"|_],_,"prevencion"),!.
+
 quitar(Palabra,W):- quitar_comas(Palabra,P), quitar_puntos(P,L),quitar_signos1(L,Z),quitar_signos2(Z,W).
 quitar_comas(Palabra,L):- open_string(Palabra,P),read_string(P,",","",_,L).
 quitar_puntos(Palabra,L):- open_string(Palabra,P),read_string(P,".","",_,L).
@@ -83,6 +85,8 @@ sujeto(singular,1,"enfermedad",["enfermedad?"|S],S).
 
 sujeto(plural,2,"causas",["causas"|S],S).
 sujeto(plural,2,"causas",["causas?"|S],S).
+sujeto(singular,1,"causas",["provoca?"|S],S).
+sujeto(singular,1,"causas",["provoca"|S],S).
 
 sujeto(singular,1,"tratamiento",["tratamiento"|S],S).
 sujeto(singular,1,"tratamiento",["tratamiento?"|S],S).
@@ -97,6 +101,7 @@ sujeto(singular,3,"prevencion",["prevenir"|S],S).
 
 verbo(singular,1,_,["tengo?"|S],S).
 verbo(singular,1,_,["tengo"|S],S).
+verbo(singular,1,_,["lo"|S],S).
 verbo(plural,2,_,["son"|S],S).
 verbo(singular,1,_,["es"|S],S).
 verbo(singular,1,_,["debo"|S],S).
