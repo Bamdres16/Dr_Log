@@ -31,7 +31,7 @@ oracion(_,"false").
 %----------------------------------
 %----------------------------------
 %----------------------------------
-%Pregunta
+%Preguntan
 %----------------------------------
 
 %Responde es que me está preguntando el usuario
@@ -153,7 +153,7 @@ mensaje("false"):- write("DrLog: No te entiendo, vuelve a escribirlo").
 mensaje("existe"):- write("DrLog: Ese sintoma ya me lo has dicho").
 mensaje("primero"):- write("DrLog: ¿Que otro síntoma presenta?").
 mensaje("segundo"):- write("DrLog: ¿Que otro síntoma presenta? Al menos requiero 3 síntomas para dar un diagnóstico.").
-
+mensaje("desconocido"):- write("DrLog: Puede que estés enfermo,pero no estoy entrenado para eso aún").
 %----------------------------------
 %Deduce que enfermedad tiene
 %----------------------------------
@@ -169,11 +169,11 @@ buscar([X|Xs] , E , P) :- enfermedad(E) , atom_string(Atom,X), buscar(Atom , E ,
 terms(0).
 reset:-  retractall(sint(X)),retractall(terms(X)),assert(terms(0)).
 
-validar(Sintomas, Enfermedad):- terms(X), X = 2,(not(guardar(Sintomas,_))->mensaje("existe");buscar(Sintomas,Enfermedad,_), mensaje("enfermedad"), write(Enfermedad),retractall(enfermo_de(Enfermedad)), assert(enfermo_de(Enfermedad)),reset).
-validar(Sintomas,_):- terms(X), X = 1,(not(guardar(Sintomas,_))->mensaje("existe");mensaje("segundo")),!.
-validar(Sintomas,_):- terms(X), X = 0,(not(guardar(Sintomas,_))->mensaje("existe");mensaje("primero")),!.
+validar(Sintomas, Enfermedad):- terms(2),findall(S,sint(S),Lista),append(Sintomas,Lista,C),(not(guardar(Sintomas,_))->mensaje("existe");(buscar(C,Enfermedad,_), mensaje("enfermedad"), write(Enfermedad),retractall(enfermo_de(_)), assert(enfermo_de(Enfermedad)),reset);mensaje("desconocido"),reset).
+validar(Sintomas,_):- terms(1),(not(guardar(Sintomas,_))->mensaje("existe");mensaje("segundo")),!.
+validar(Sintomas,_):- terms(0),(not(guardar(Sintomas,_))->mensaje("existe");mensaje("primero")),!.
 guardar([],0).
-guardar(Sintomas,Len):- cabeza(Sintomas,C,R), (not(sint(C))-> (assert(sint(C)),terms(X),guardar(R,Len1),retractall(terms(_)), Len is Len1 +1+X,assert(terms(Len)))),!.
+guardar(Sintomas,Len):- cabeza(Sintomas,C,R),(not(sint(C))-> (assert(sint(C)),terms(X),guardar(R,Len1),retractall(terms(_)), Len is Len1 +1+X,assert(terms(Len)))),!.
 
 
 start:-
@@ -182,15 +182,6 @@ start:-
     not (nl,
     write("Paciente: "),
     read(Z),
-    oracion(Z,Mensaje2),
+    atom_string(Z,L),
+    oracion(L,Mensaje2),
     mensaje(Mensaje2)).
-
-
-
-
-
-
-
-
-
-

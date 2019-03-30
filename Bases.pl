@@ -20,7 +20,7 @@
 %Tabla 1. Sintomas.
 sintomas(tos).
 sintomas(ahogo).
-sintomas(dolorPecho).
+sintomas(fatiga).
 sintomas(fiebre).
 sintomas(mocos).
 sintomas(comezon).
@@ -66,7 +66,7 @@ enfermedad(varicela).
 %
 sintomas_de(tos,asma).
 sintomas_de(ahogo,asma).
-sintomas_de(dolorPecho,asma).
+sintomas_de(fatiga,asma).
 sintomas_de(tos, gripe).
 sintomas_de(fiebre,gripe).
 sintomas_de(mocos,gripe).
