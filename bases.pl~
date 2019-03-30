@@ -21,10 +21,8 @@
 sintomas(tos).
 sintomas(ahogo).
 sintomas(dolorPecho).
-
 sintomas(fiebre).
 sintomas(mocos).
-
 sintomas(comezon).
 sintomas(dolor).
 
@@ -61,79 +59,63 @@ enfermedad(gripe).
 enfermedad(asma).
 enfermedad(varicela).
 
-%Relaciones
-
-
-limita_con(costaRica, nicaragua). %brasil limita con argentina, son grafos son dirigidos
-limita_con(nicaragua, alemania).
-limita_con(alemania, eeuu).
-limita_con(eeuu, costaRica).
-
-limitrofes(X,Y):-limita_con(X,Y). %OR.
-limitrofes(X,Y):-limita_con(Y,X). %grafo no dirigido.
-
-
-
-superficie_pais(nicaragua, 123).
-superficie_pais(alemania, 345).
-
-
-pais_pequeño(X):- superficie_pais(X,Y), Y < 200.
 %---------------------------------------------------------------
 %-----------------Relaciones de sintomas y enfermedades---------.
 %
 %
-sintomas_de(tos, ahogo,dolorPecho,asma).
-sintomas_de(tos, fiebre, mocos, gripe).
-sintomas_de(comezon, fiebre, dolor, varicela).
+sintomas_de(tos,asma).
+sintomas_de(ahogo,asma).
+sintomas_de(dolorPecho,asma).
+sintomas_de(tos, gripe).
+sintomas_de(fiebre,gripe).
+sintomas_de(mocos,gripe).
+sintomas_de(fiebre,varicela).
+sintomas_de(dolor,varicela).
+sintomas_de(comezon,varicela).
 %
-sintomas_General(W,X,Y,Z):- sintomas_de(W,X,Y,Z).
-sintomas_General(W,X,Y,Z):- sintomas_de(X,Y,W,Z).
-sintomas_General(W,X,Y,Z):- sintomas_de(X,W,Y,Z).
-sintomas_General(W,X,Y,Z):- sintomas_de(Y,X,W,Z).
-sintomas_General(W,X,Y,Z):- sintomas_de(Y,W,X,Z).
-sintomas_General(W,X,Y,Z):- sintomas_de(W,Y,X,Z).
+
 %--------------------------------------------------------------
 %-----------------Relaciones de causas y enfermedades----------
 
-causas_de(ejercicio, infeccion, contaminantes,asma).
-causas_de(virus, contagio, bajasDefensas,gripe).
-causas_de(virus, infeccion, contagio, varicela).
+causas_de(ejercicio,asma).
+causas_de(infeccion,asma).
+causas_de(contaminantes,asma).
+causas_de(virus,gripe).
+causas_de(contagio,gripe).
+causas_de(bajasDefensas,gripe).
+causas_de(virus,varicela).
+causas_de(infeccion,varicela).
+causas_de(contagio, varicela).
 
-causas_General(W,X,Y,Z):- causas_de(W,X,Y,Z).
-causas_General(W,X,Y,Z):- causas_de(X,Y,W,Z).
-causas_General(W,X,Y,Z):- causas_de(X,W,Y,Z).
-causas_General(W,X,Y,Z):- causas_de(Y,X,W,Z).
-causas_General(W,X,Y,Z):- causas_de(Y,W,X,Z).
-causas_General(W,X,Y,Z):- causas_de(W,Y,X,Z).
+
 
 %--------------------------------------------------------------
 %-----------------Relaciones de prevencion y enfermedades------
 
-prevencion_de(vacunas, vitaminas,consultaMedica,asma).
-prevencion_de(abrigo, vitaminas, higiene,gripe).
-prevencion_de(vacuna,evitarContacto ,vitaminas , varicela).
+prevencion_de(vacunas,asma).
+prevencion_de(vitaminas,asma).
+prevencion_de(consultaMedica,asma).
+prevencion_de(vitaminas,gripe).
+prevencion_de(higiene,gripe).
+prevencion_de(abrigo,gripe).
+prevencion_de(vitaminas , varicela).
+prevencion_de(vacuna,varicela).
+prevencion_de(evitarContacto).
 
-prevencion_General(W,X,Y,Z):- prevencion_de(W,X,Y,Z).
-prevencion_General(W,X,Y,Z):- prevencion_de(X,Y,W,Z).
-prevencion_General(W,X,Y,Z):- prevencion_de(X,W,Y,Z).
-prevencion_General(W,X,Y,Z):- prevencion_de(Y,X,W,Z).
-prevencion_General(W,X,Y,Z):- prevencion_de(Y,W,X,Z).
-prevencion_General(W,X,Y,Z):- prevencion_de(W,Y,X,Z).
 
 %--------------------------------------------------------------
 %-----------------Relaciones de tratamiento y enfermedades-----
 
-tratamiento_de(antiinflamatorio,broncodilatadores,antihistaminicos, asma).
-tratamiento_de(paracetamol,analgesico, hidratacion, gripe).
-tratamiento_de(aspirina, acetaminofen, calamina,varicela).
+tratamiento_de(antiinflamatorio,asma).
+tratamiento_de(broncodilatadores,asma).
+tratamiento_de(antihistaminicos,asma).
+tratamiento_de(paracetamol,gripe).
+tratamiento_de(analgesico,gripe).
+tratamiento_de(hidratacion,gripe).
+tratamiento_de(aspirina,varicela).
+tratamiento_de(acetaminofen,varicela).
+tratamiento_de(calamina,varicela).
 
-tratamiento_General(W,X,Y,Z):- tratamiento_de(W,X,Y,Z).
-tratamiento_General(W,X,Y,Z):- tratamiento_de(X,Y,W,Z).
-tratamiento_General(W,X,Y,Z):- tratamiento_de(X,W,Y,Z).
-tratamiento_General(W,X,Y,Z):- tratamiento_de(Y,X,W,Z).
-tratamiento_General(W,X,Y,Z):- tratamiento_de(Y,W,X,Z).
-tratamiento_General(W,X,Y,Z):- tratamiento_de(W,Y,X,Z).
 
 %--------------------------------------------------------------
 
