@@ -44,7 +44,7 @@ pregunta(S0,S,Responde):- pronombre_int(Num,Relacion,S0,S1), verbo(Num,Relacion,
 pregunta(S0,S,Responde):- pronombre_int(Num,Relacion,S0,S1), verbo(Num,Relacion,Responde,S1,S2), nombre(S2,S).
 
 % Pronombre + verbo + articulo + sujeto + preposicion + articulo +
-pregunta(S0,S,S6):- pronombre_int(Num,Relacion,S0,S1), verbo(Num,Relacion,_,S1,S2), articulo(Num,Relacion,S2,S3),sujeto(Num,Relacion,Responde,S3,S4), preposición(S4,S5), articulo(S5,S), cabeza(S,S6,_), atom_string(Atom, S6), enfermedad(Atom).
+pregunta(S0,S,S6):- pronombre_int(Num,Relacion,S0,S1), verbo(Num,Relacion,_,S1,S2), articulo(Num,Relacion,S2,S3),sujeto(Num,Relacion,_,S3,S4), preposición(S4,S5), articulo(S5,S), cabeza(S,S6,_), atom_string(Atom, S6), enfermedad(Atom).
 pregunta(S0,_,S1):- verbo(_,_,_,S0,S1),!.
 
 pregunta([_|S0],_,Tipo):- pregunta(S0,_,Tipo).
@@ -133,3 +133,4 @@ d_primera("gracias",["muchas"|S],S).
 buscar([], _ , 0).
 buscar(X , E , 1) :- sintomas_de(X, E).
 buscar([X|Xs] , E , P) :- enfermedad(E) , buscar(X , E , S1) , buscar(Xs , E ,S2) , P is S1 + S2,!.
+?- write("--------------------Para iniciar escriba start--------------------").
