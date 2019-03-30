@@ -169,7 +169,7 @@ buscar([X|Xs] , E , P) :- enfermedad(E) , atom_string(Atom,X), buscar(Atom , E ,
 terms(0).
 reset:-  retractall(sint(X)),retractall(terms(X)),assert(terms(0)).
 
-validar(Sintomas, Enfermedad):- terms(2),findall(S,sint(S),Lista),append(Sintomas,Lista,C),(not(guardar(Sintomas,_))->mensaje("existe");(buscar(C,Enfermedad,_), mensaje("enfermedad"), write(Enfermedad),retractall(enfermo_de(Enfermedad)), assert(enfermo_de(Enfermedad)),reset);mensaje("desconocido"),reset).
+validar(Sintomas, Enfermedad):- terms(2),findall(S,sint(S),Lista),append(Sintomas,Lista,C),(not(guardar(Sintomas,_))->mensaje("existe");(buscar(C,Enfermedad,_), mensaje("enfermedad"), write(Enfermedad),retractall(enfermo_de(_)), assert(enfermo_de(Enfermedad)),reset);mensaje("desconocido"),reset).
 validar(Sintomas,_):- terms(1),(not(guardar(Sintomas,_))->mensaje("existe");mensaje("segundo")),!.
 validar(Sintomas,_):- terms(0),(not(guardar(Sintomas,_))->mensaje("existe");mensaje("primero")),!.
 guardar([],0).

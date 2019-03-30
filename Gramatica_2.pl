@@ -136,9 +136,9 @@ d_primera("gracias",["muchas"|S],S).
 
 
 %----------------------------------
-%Acomodar sintomas
+%Causas
 %----------------------------------
-
+listar_causas:- enfermo_de(X), write(X).
 
 
 %----------------------------------
@@ -154,13 +154,13 @@ mensaje("existe"):- write("DrLog: Ese sintoma ya me lo has dicho").
 mensaje("primero"):- write("DrLog: ¿Que otro síntoma presenta?").
 mensaje("segundo"):- write("DrLog: ¿Que otro síntoma presenta? Al menos requiero 3 síntomas para dar un diagnóstico.").
 mensaje("desconocido"):- write("DrLog: Puede que estés enfermo,pero no estoy entrenado para eso aún").
+mensaje("causas"):- listar_causas.
 %----------------------------------
 %Deduce que enfermedad tiene
 %----------------------------------
 buscar([], _ , 0).
 buscar(X , E , 1) :-sintomas_de(X, E).
 buscar([X|Xs] , E , P) :- enfermedad(E) , atom_string(Atom,X), buscar(Atom , E , S1)  , buscar(Xs , E ,S2) , P is S1 + S2,!.
-
 
 
 %----------------------------------

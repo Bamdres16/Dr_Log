@@ -79,15 +79,15 @@ sintomas_de(comezon,varicela).
 %--------------------------------------------------------------
 %-----------------Relaciones de causas y enfermedades----------
 
-causas_de(ejercicio,asma).
-causas_de(infeccion,asma).
-causas_de(contaminantes,asma).
-causas_de(virus,gripe).
-causas_de(contagio,gripe).
-causas_de(bajasDefensas,gripe).
-causas_de(virus,varicela).
-causas_de(infeccion,varicela).
-causas_de(contagio, varicela).
+causas_de("realizar actividad física",asma).
+causas_de("alguna infeccion",asma).
+causas_de("contaminantes",asma).
+causas_de("un virus",gripe).
+causas_de("contagio de otra persona",gripe).
+causas_de("bajas denfesas",gripe).
+causas_de("transmitirse cuando una persona con varicela tose",varicela).
+causas_de("la infección de la varicela es causada por un virus",varicela).
+causas_de("contagio de otra persona", varicela).
 
 
 
