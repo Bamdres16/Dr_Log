@@ -148,20 +148,20 @@ d_primera("gracias",["muchas"|S],S).
 %----------------------------------
 %Causas
 %----------------------------------
-listar_causas:- enfermo_de(X), findall(Z,causas_de(Z,X),L), write("DrLog: La "), write(X), write(" puede ser causada por "),cabeza(L,C,R), listar_causas(C,R).
+listar_causas:- (enfermo_de(X)-> findall(Z,causas_de(Z,X),L), write("DrLog: La "), write(X), write(" puede ser causada por "),cabeza(L,C,R), listar_causas(C,R));mensaje("nulo").
 listar_causas(Head,[]):- write("y "),write(Head), write(".") .
 listar_causas(Head,Resto):- write(Head), write(", "), cabeza(Resto,C,R),listar_causas(C,R).
 
 %----------------------------------
 %Prevencion
 %----------------------------------
-listar_prevencion:- enfermo_de(X), findall(Z,prevencion_de(Z,X),L), write("DrLog: Para la "), write(X), write(" se recomienda que "),cabeza(L,C,R), listar_causas(C,R).
+listar_prevencion:- (enfermo_de(X)-> findall(Z,prevencion_de(Z,X),L), write("DrLog: Para la "), write(X), write(" se recomienda que "),cabeza(L,C,R), listar_causas(C,R));mensaje("nulo").
 listar_prevencion(Head,[]):- write("y "),write(Head), write(".") .
 listar_prevencion(Head,Resto):- write(Head), write(", "), cabeza(Resto,C,R),listar_prevencion(C,R).
 %----------------------------------
 %Tratamiento
 %----------------------------------
-listar_tratamiento:- enfermo_de(X), findall(Z,tratamiento_de(Z,X),L), write("DrLog: La "), write(X), write(" se puede tratar con "),cabeza(L,C,R), listar_causas(C,R).
+listar_tratamiento:- (enfermo_de(X)-> findall(Z,tratamiento_de(Z,X),L), write("DrLog: La "), write(X), write(" se puede tratar con "),cabeza(L,C,R), listar_causas(C,R));mensaje("nulo").
 listar_tratamiento(Head,[]):- write("y "),write(Head), write(".") .
 listar_tratamiento(Head,Resto):- write(Head), write(", "), cabeza(Resto,C,R),listar_tratamiento(C,R).
 

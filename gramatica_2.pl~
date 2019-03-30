@@ -161,7 +161,7 @@ listar_prevencion(Head,Resto):- write(Head), write(", "), cabeza(Resto,C,R),list
 %----------------------------------
 %Tratamiento
 %----------------------------------
-listar_tratamiento:- enfermo_de(X), findall(Z,tratamiento_de(Z,X),L), write("DrLog: La "), write(X), write(" se puede tratar con "),cabeza(L,C,R), listar_causas(C,R).
+listar_tratamiento:- (enfermo_de(X)-> findall(Z,tratamiento_de(Z,X),L), write("DrLog: La "), write(X), write(" se puede tratar con "),cabeza(L,C,R), listar_causas(C,R));mensaje("nulo").
 listar_tratamiento(Head,[]):- write("y "),write(Head), write(".") .
 listar_tratamiento(Head,Resto):- write(Head), write(", "), cabeza(Resto,C,R),listar_tratamiento(C,R).
 
@@ -172,7 +172,7 @@ mensaje("saludo"):- write("DrLog: Cuénteme, en qué lo puedo ayudar?").
 mensaje("adios"):-  write("DrLog: Hasta luego"), fail.
 mensaje("gracias"):- write("DrLog: Con mucho gusto, nos vemos pronto."), fail.
 mensaje("enfermedad"):- (enfermo_de(X)-> write("DrLog: Usted padece de "), write(X)); mensaje("nulo").
-mensaje("nulo"):- write("Debe ingresar sus sintomas").
+mensaje("nulo"):- write("DrLog: Debe ingresar sus sintomas").
 mensaje("enfermo"):- write("DrLog: Usted padece de ").
 
 mensaje(Lista):- is_list(Lista),validar(Lista,_).
