@@ -43,23 +43,29 @@ oracion(_,"false").
 pregunta(S0,S,Responde):- pronombre_int(Num,Relacion,S0,S1),sujeto(Num,Relacion,Responde,S1,S2), verbo(Num,Relacion,_,S2,S).
 %
 pregunta(S0,S,Responde):- pronombre_int(Num,Relacion,S0,S1), verbo(Num,Relacion,_,S1,S2),sujeto(Num,Relacion,Responde,S2,S).
+pregunta(S0,S,Responde):- pronombre_int(Num,Relacion,S0,S1), verbo(Num,Relacion,_,S1,S2),verbo(Num,Relacion,Responde,S2,S).
 
 pregunta(S0,S,Responde):- pronombre_int(Num,Relacion,S0,S1), verbo(Num,Relacion,_,S1,S2), articulo(Num,Relacion,S2,S3), sujeto(Num, Relacion, Responde, S3,S).
 
 pregunta(S0,S,Responde):- pronombre_int(Num,Relacion,S0,S1), verbo(Num,Relacion,Responde,S1,S2), nombre(S2,S).
 
 % Pronombre + verbo + articulo + sujeto + preposicion + articulo +
-pregunta(S0,S,S6):- pronombre_int(Num,Relacion,S0,S1), verbo(Num,Relacion,_,S1,S2), articulo(Num,Relacion,S2,S3),sujeto(Num,Relacion,_,S3,S4), preposición(S4,S5), articulo(S5,S), cabeza(S,S6,_), atom_string(Atom, S6), enfermedad(Atom).
+
+
+pregunta(S0,_,Responde):- pronombre_int(Num,Relacion,S0,S1),verbo(Num,Relacion,_,S1,S2), articulo(Num,Relacion,S2,S3),sujeto(Num,Relacion,Responde,S3,S4),preposición(S4,S5), articulo(S5,S6),cabeza(S6,C,_),quitar(C,Z),atom_string(Atom, Z), enfermedad(Atom),!.
+
+pregunta(S0,_,Responde):- pronombre_int(Num,Relacion,S0,S1),verbo(Num,Relacion,_,S1,S2), articulo(Num,Relacion,S2,S3),sujeto(Num,Relacion,Responde,S3,S4),preposición(S4,S6),cabeza(S6,C,_),quitar(C,Z),atom_string(Atom, Z), enfermedad(Atom),!.
 
 
 pregunta(S0,_,[S1]):-(cabeza(S0,"tengo",[S|_]);cabeza(S0,"tenido",[S|_])),quitar(S,S1),!.
 
 pregunta(S0,_,[Z]):- cabeza(S0,C,_),quitar(C,Z),atom_string(Atom, Z), sintomas(Atom).
 pregunta([_|S0],_,Tipo):- pregunta(S0,_,Tipo).
-quitar(Palabra,L):- quitar_comas(Palabra,P), quitar_puntos(P,L).
+quitar(Palabra,W):- quitar_comas(Palabra,P), quitar_puntos(P,L),quitar_signos1(L,Z),quitar_signos2(Z,W).
 quitar_comas(Palabra,L):- open_string(Palabra,P),read_string(P,",","",_,L).
 quitar_puntos(Palabra,L):- open_string(Palabra,P),read_string(P,".","",_,L).
-
+quitar_signos1(Palabra,L):- open_string(Palabra,P),read_string(P,"?","",_,L).
+quitar_signos2(Palabra,L):- open_string(Palabra,P),read_string(P,"¿","",_,L).
 pronombre_int(singular,1,["¿qué"|S],S).
 pronombre_int(singular,1,["qué"|S],S).
 
@@ -93,6 +99,9 @@ verbo(singular,1,_,["tengo?"|S],S).
 verbo(singular,1,_,["tengo"|S],S).
 verbo(plural,2,_,["son"|S],S).
 verbo(singular,1,_,["es"|S],S).
+verbo(singular,1,_,["debo"|S],S).
+verbo(singular,1,"tratamiento",["tomar"|S],S).
+verbo(singular,1,"tratamiento",["tomar?"|S],S).
 
 verbo(singular,3,_,["puedo"|S],S).
 verbo(singular,3,_,["puede"|S],S).
@@ -106,6 +115,8 @@ articulo(singular,1,["la"|S],S).
 articulo(["la"|S],S).
 
 preposición(["de"|S],S).
+preposición(["del"|S],S).
+
 
 
 %----------------------------------
@@ -152,20 +163,20 @@ d_primera("gracias",["muchas"|S],S).
 %----------------------------------
 %Causas
 %----------------------------------
-listar_causas:- (enfermo_de(X)-> findall(Z,causas_de(Z,X),L), write("DrLog: La "), write(X), write(" puede ser causada por "),cabeza(L,C,R), listar_causas(C,R));mensaje("nulo").
+listar_causas:- (enfermo_de(X)-> findall(Z,causas_de(Z,X),L), write("DrLog: La "), write(X), write(" puede ser causada por "),cabeza(L,C,R), listar_causas(C,R), mensaje("duda"));mensaje("nulo").
 listar_causas(Head,[]):- write("y "),write(Head), write(".") .
 listar_causas(Head,Resto):- write(Head), write(", "), cabeza(Resto,C,R),listar_causas(C,R).
 
 %----------------------------------
 %Prevencion
 %----------------------------------
-listar_prevencion:- (enfermo_de(X)-> findall(Z,prevencion_de(Z,X),L), write("DrLog: Para la "), write(X), write(" se recomienda que "),cabeza(L,C,R), listar_causas(C,R));mensaje("nulo").
+listar_prevencion:- (enfermo_de(X)-> findall(Z,prevencion_de(Z,X),L), write("DrLog: Para la "), write(X), write(" se recomienda que "),cabeza(L,C,R), listar_causas(C,R), mensaje("duda"));mensaje("nulo").
 listar_prevencion(Head,[]):- write("y "),write(Head), write(".") .
 listar_prevencion(Head,Resto):- write(Head), write(", "), cabeza(Resto,C,R),listar_prevencion(C,R).
 %----------------------------------
 %Tratamiento
 %----------------------------------
-listar_tratamiento:- (enfermo_de(X)-> findall(Z,tratamiento_de(Z,X),L), write("DrLog: La "), write(X), write(" se puede tratar con "),cabeza(L,C,R), listar_causas(C,R));mensaje("nulo").
+listar_tratamiento:- (enfermo_de(X)-> findall(Z,tratamiento_de(Z,X),L), write("DrLog: La "), write(X), write(" se puede tratar con "),cabeza(L,C,R), listar_causas(C,R),mensaje("duda"));mensaje("nulo").
 listar_tratamiento(Head,[]):- write("y "),write(Head), write(".") .
 listar_tratamiento(Head,Resto):- write(Head), write(", "), cabeza(Resto,C,R),listar_tratamiento(C,R).
 
@@ -176,7 +187,7 @@ mensaje("saludo"):- write("DrLog: Cuénteme, en qué lo puedo ayudar?").
 mensaje("adios"):-  write("DrLog: Hasta luego"), fail.
 mensaje("gracias"):- write("DrLog: Con mucho gusto, nos vemos pronto."), fail.
 mensaje("enfermedad"):- (enfermo_de(X)-> write("DrLog:  Usted presenta los sintomas de "), write(X)); mensaje("nulo").
-mensaje("nulo"):- write("DrLog: Debe ingresar sus sintomas").
+mensaje("nulo"):- write("DrLog: Debe ingresar sus sintomas, qué tienes?").
 mensaje("enfermo"):- write("DrLog: Usted presenta los sintomas de ").
 mensaje(Lista):- is_list(Lista),validar(Lista,_).
 mensaje("false"):- write("DrLog: No te entiendo, vuelve a escribirlo").
@@ -185,9 +196,9 @@ mensaje("primero"):- write("DrLog: ¿Que otro síntoma presenta?").
 mensaje("segundo"):- write("DrLog: ¿Que otro síntoma presenta? Al menos requiero 3 síntomas para dar un diagnóstico.").
 mensaje("desconocido"):- write("DrLog: Puede que estés enfermo,pero no estoy entrenado para eso aún").
 mensaje("duda"):- write(" Alguna otra duda?").
-mensaje("causas"):- listar_causas, mensaje("duda").
-mensaje("tratamiento"):- listar_tratamiento, mensaje("duda").
-mensaje("prevencion"):-listar_prevencion, mensaje("duda").
+mensaje("causas"):- listar_causas.
+mensaje("tratamiento"):- listar_tratamiento.
+mensaje("prevencion"):-listar_prevencion.
 %----------------------------------
 %Deduce que enfermedad tiene
 %----------------------------------
@@ -210,14 +221,29 @@ guardar([],0).
 guardar(Sintomas,Len):- cabeza(Sintomas,C,R),(not(sint(C))-> (assert(sint(C)),terms(X),guardar(R,Len1),retractall(terms(_)), Len is Len1 +1+X,assert(terms(Len)))),!.
 
 start:-
+    write('\e[2J'),
+    sleep(0.02),
+		write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'),nl,
+		sleep(0.02),
+		write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'),nl,
+		sleep(0.02),
+		write("||||||||||||||||||||| Sistema Experto Dr_Log||||||||||||||||||||||"),nl,
+		sleep(0.02),
+		write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'),nl,
+		sleep(0.02),
+		write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'),nl,
+
+
     resetall,
     repeat,
     not (nl,
-    write("Paciente: "),
+    write('Paciente: '),
     read(Z),
     atom_string(Z,L),
     oracion(L,Mensaje2),
     mensaje(Mensaje2)).
 
 
+
+?- write('Inserte start, para iniciar el sistema experto'),nl.
 
