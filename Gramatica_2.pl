@@ -31,7 +31,7 @@ oracion(_,"false").
 %----------------------------------
 %----------------------------------
 %----------------------------------
-%Preguntan
+%Preguntas
 %----------------------------------
 
 %Responde es que me está preguntando el usuario
@@ -138,8 +138,22 @@ d_primera("gracias",["muchas"|S],S).
 %----------------------------------
 %Causas
 %----------------------------------
-listar_causas:- enfermo_de(X), write(X).
+listar_causas:- enfermo_de(X), findall(Z,causas_de(Z,X),L), write("DrLog: La "), write(X), write(" puede ser causada por "),cabeza(L,C,R), listar_causas(C,R).
+listar_causas(Head,[]):- write("y "),write(Head), write(".") .
+listar_causas(Head,Resto):- write(Head), write(", "), cabeza(Resto,C,R),listar_causas(C,R).
 
+%----------------------------------
+%Prevencion
+%----------------------------------
+listar_prevencion:- enfermo_de(X), findall(Z,prevencion_de(Z,X),L), write("DrLog: Para la "), write(X), write(" se recomienda que "),cabeza(L,C,R), listar_causas(C,R).
+listar_prevencion(Head,[]):- write("y "),write(Head), write(".") .
+listar_prevencion(Head,Resto):- write(Head), write(", "), cabeza(Resto,C,R),listar_prevencion(C,R).
+%----------------------------------
+%Tratamiento
+%----------------------------------
+listar_tratamiento:- enfermo_de(X), findall(Z,tratamiento_de(Z,X),L), write("DrLog: La "), write(X), write(" se puede tratar con "),cabeza(L,C,R), listar_causas(C,R).
+listar_tratamiento(Head,[]):- write("y "),write(Head), write(".") .
+listar_tratamiento(Head,Resto):- write(Head), write(", "), cabeza(Resto,C,R),listar_tratamiento(C,R).
 
 %----------------------------------
 %Mensajes para DrLog
@@ -155,6 +169,8 @@ mensaje("primero"):- write("DrLog: ¿Que otro síntoma presenta?").
 mensaje("segundo"):- write("DrLog: ¿Que otro síntoma presenta? Al menos requiero 3 síntomas para dar un diagnóstico.").
 mensaje("desconocido"):- write("DrLog: Puede que estés enfermo,pero no estoy entrenado para eso aún").
 mensaje("causas"):- listar_causas.
+mensaje("tratamiento"):- listar_tratamiento.
+mensaje("prevencion"):-listar_prevencion.
 %----------------------------------
 %Deduce que enfermedad tiene
 %----------------------------------
@@ -167,17 +183,17 @@ buscar([X|Xs] , E , P) :- enfermedad(E) , atom_string(Atom,X), buscar(Atom , E ,
 %Conversacion
 %----------------------------------
 terms(0).
-reset:-  retractall(sint(X)),retractall(terms(X)),assert(terms(0)).
 
+reset:-  retractall(sint(X)),retractall(terms(X)),assert(terms(0)).
+resetall:- reset, retractall(enfermo_de(_)).
 validar(Sintomas, Enfermedad):- terms(2),findall(S,sint(S),Lista),append(Sintomas,Lista,C),(not(guardar(Sintomas,_))->mensaje("existe");(buscar(C,Enfermedad,_), mensaje("enfermedad"), write(Enfermedad),retractall(enfermo_de(_)), assert(enfermo_de(Enfermedad)),reset);mensaje("desconocido"),reset).
 validar(Sintomas,_):- terms(1),(not(guardar(Sintomas,_))->mensaje("existe");mensaje("segundo")),!.
 validar(Sintomas,_):- terms(0),(not(guardar(Sintomas,_))->mensaje("existe");mensaje("primero")),!.
 guardar([],0).
 guardar(Sintomas,Len):- cabeza(Sintomas,C,R),(not(sint(C))-> (assert(sint(C)),terms(X),guardar(R,Len1),retractall(terms(_)), Len is Len1 +1+X,assert(terms(Len)))),!.
 
-
 start:-
-    reset,
+    resetall,
     repeat,
     not (nl,
     write("Paciente: "),

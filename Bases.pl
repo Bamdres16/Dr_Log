@@ -79,7 +79,7 @@ sintomas_de(comezon,varicela).
 %--------------------------------------------------------------
 %-----------------Relaciones de causas y enfermedades----------
 
-causas_de("realizar actividad física",asma).
+causas_de("realizar actividad fisica",asma).
 causas_de("alguna infeccion",asma).
 causas_de("contaminantes",asma).
 causas_de("un virus",gripe).
@@ -94,29 +94,29 @@ causas_de("contagio de otra persona", varicela).
 %--------------------------------------------------------------
 %-----------------Relaciones de prevencion y enfermedades------
 
-prevencion_de(vacunas,asma).
-prevencion_de(vitaminas,asma).
-prevencion_de(consultaMedica,asma).
-prevencion_de(vitaminas,gripe).
-prevencion_de(higiene,gripe).
-prevencion_de(abrigo,gripe).
-prevencion_de(vitaminas , varicela).
-prevencion_de(vacuna,varicela).
-prevencion_de(evitarContacto).
+prevencion_de("quite las alfombras y aspire regularmente",asma).
+prevencion_de("use sólo detergentes y materiales de limpieza sin fragancia en el hogar",asma).
+prevencion_de("mantenga los niveles de humedad bajos y arregle los escapes",asma).
+prevencion_de("guarde reposo en su hogar cuando este enfermo",gripe).
+prevencion_de("lavarse las manos",gripe).
+prevencion_de("evitar el contacto cercano",gripe).
+prevencion_de("se vacune contra esta enfermedad" , varicela).
+prevencion_de("evite el contacto directo con las lesiones de la piel de una persona enferma",varicela).
+prevencion_de("desinfecte los utensilios que han estado en contacto con el enfermo",varicela).
 
 
 %--------------------------------------------------------------
 %-----------------Relaciones de tratamiento y enfermedades-----
 
-tratamiento_de(antiinflamatorio,asma).
-tratamiento_de(broncodilatadores,asma).
-tratamiento_de(antihistaminicos,asma).
-tratamiento_de(paracetamol,gripe).
-tratamiento_de(analgesico,gripe).
-tratamiento_de(hidratacion,gripe).
-tratamiento_de(aspirina,varicela).
-tratamiento_de(acetaminofen,varicela).
-tratamiento_de(calamina,varicela).
+tratamiento_de("antiinflamatorios, los mas utilizados son los corticoides (beclometasona, budesonida, fluticasona)",asma).
+tratamiento_de("broncodilatadores, se utilizan agonistas beta 2 (salbutamol, terbutalina, salmeterol y formeterol)",asma).
+tratamiento_de("antihistamínicos, no controlan el asma pero si son útiles para disminuir los síntomas alérgicos",asma).
+tratamiento_de("analgesicos habituales (paracetamol o ibuprofeno)",gripe).
+tratamiento_de("tratamientos para la gripe antivirales",gripe).
+tratamiento_de("beber liquidos en abundancia",gripe).
+tratamiento_de("antibioticos",varicela).
+tratamiento_de("antihistaminico para aliviar la picazón",varicela).
+tratamiento_de("calamina para reducir el ardor",varicela).
 
 
 %--------------------------------------------------------------
